@@ -1,0 +1,6 @@
+models:  
+  Logistic_Regression: "https://www.dropbox.com/scl/fi/3wjhmeyvqdsm5pnjdgjnb/Logistic_Regression.pkl?rlkey=4txtypin9739qp3258quyzyov&st=ytabe21j&dl=1"
+  Keras_CNN: "https://www.dropbox.com/scl/fi/1ib2p4ymu95kafuofnlrn/Keras_CNN.pkl?rlkey=i7nv1rqkmop96o03tiu6xy0ug&st=tkqsntft&dl=1"
+  Pytorch_CNN: "https://www.dropbox.com/scl/fi/r4rflnv8gsire5te1o6xe/Pytorch_CNN.pkl?rlkey=z4yd87gkmxe8eujcj37hvp92l&st=zhzu6p0e&dl=1"
+  Customize_BERT: "https://www.dropbox.com/scl/fi/jh8n1fstwaijqi6d6u1op/Customize_BERT.pkl?rlkey=dgfym0pu7cdwbquzh58ut7yol&st=0q86z3u6&dl=1"
+  Huggingface_Transformer: "https://www.dropbox.com/scl/fi/o4o5aq98o35682wt3fk3i/Huggingface_Transformer.pkl?rlkey=pcw18synb6jeq15q5hzw4f5um&st=q31gw0k8&dl=1"

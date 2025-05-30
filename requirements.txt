@@ -1,31 +1,9 @@
-# Core Data Science Libraries
-numpy>=1.21.0
-pandas>=1.3.0
-matplotlib>=3.5.0
-seaborn>=0.11.0
-
-# Machine Learning Libraries
-scikit-learn>=1.0.0
-
-# Natural Language Processing
-nltk>=3.7
-
-# Deep Learning - TensorFlow/Keras
-tensorflow>=2.8.0
-
-# Deep Learning - PyTorch
-torch>=1.11.0
-torchvision>=0.12.0
-torchaudio>=0.11.0
-
-# Additional Utilities
-wordcloud>=1.8.0
-scikeras>=0.8.0
-
-# Optional: For better performance and compatibility
-protobuf>=3.19.0,<4.0.0
-h5py>=3.6.0
-
-# For Jupyter Notebook support (optional)
-# jupyter>=1.0.0
-# ipykernel>=6.0.0
+pandas
+numpy
+scikit-learn
+torch
+tensorflow
+keras
+transformers
+dotenv
+streamlit
