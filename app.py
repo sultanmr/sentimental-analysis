@@ -140,7 +140,7 @@ def make_prediction(text, model_name):
         prob = float(prob)
         if pred==1:
             probabilities = np.array([1-prob, prob])
-        else
+        else:
             probabilities = np.array([prob, 1-prob])
         return pred, probabilities
     except Exception as e:
