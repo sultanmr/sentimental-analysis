@@ -41,7 +41,7 @@ namex
 narwhals
 networkx
 nltk
-numpy
+numpy<2.0
 opt_einsum
 optree
 packaging

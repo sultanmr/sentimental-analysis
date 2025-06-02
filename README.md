@@ -1,157 +1,194 @@
-# 🍽️ Restaurant Review Sentiment Analysis with Ensemble Voting
+![image](https://github.com/user-attachments/assets/3faaa052-d824-4dce-bb87-70ba5d31b51b)
 
-This project implements a sentiment analysis system that classifies restaurant reviews as **positive** or **negative** using an ensemble of three different models:
+# 🍽️ Restaurant Review Sentiment Analysis with Ensemble Learning
 
-* 📊 Traditional Machine Learning (TF-IDF + Logistic Regression / SVM)
-* 🧠 Keras-based Convolutional Neural Network (CNN)
-* 🔥 PyTorch-based Convolutional Neural Network (CNN)
+A robust sentiment analysis system that classifies restaurant reviews as positive or negative using an ensemble of machine learning and deep learning models.
 
-By combining diverse modeling techniques, the ensemble aims to achieve superior performance using both **soft** and **hard voting** strategies.
+## 🌟 Key Features
 
----
+- **Multi-Model Ensemble** combining:
+  - 📊 Traditional ML (TF-IDF + Logistic Regression/SVM)
+  - 🧠 Keras-based CNN
+  - 🔥 PyTorch-based CNN
+  - 🗳️ **Voting System** (hard and soft voting options)
+  - 📈 Comprehensive performance metrics
+  - 🛠️ Modular architecture for easy extension
 
-## 🚀 Features
+## 📊 Performance Comparison
 
-* Preprocessing using NLTK with lemmatization and stopword removal.
-* TF-IDF vectorization for traditional ML models.
-* Keras and PyTorch CNNs with embedded text representations.
-* Soft and hard ensemble voting strategies.
-* Evaluation with accuracy, F1-score, and confusion matrix.
-* Highly modular code structure for easy extension.
+| Model                     | Accuracy | F1-Score | Training Time |
+|---------------------------|----------|----------|---------------|
+| Logistic Regression       | 0.81     | 0.81     | 30s           |
+| Keras CNN                 | 0.71     | 0.84     | 2min          |
+| PyTorch CNN               | 0.86     | 0.85     | 3min          |
+| Customize Bert            | 0.89     | 0.84     | 2min          |
+| Hugginface Transformer    | 0.94     | 0.85     | 0min          |
+| **Ensemble (Voting)**     | **0.88** | **0.87** | -             |
 
----
+## 🚀 Quick Start
 
-## 🧰 Tech Stack
+### Prerequisites
+- Python 3.8+
+- pip package manager
 
-* Python 3.8+
-* Pandas, NumPy, Seaborn, Matplotlib
-* NLTK for NLP preprocessing
-* Scikit-learn for ML models
-* TensorFlow/Keras for deep learning
-* PyTorch for alternative deep learning modeling
+### Installation
 
----
+```bash
+git clone https://github.com/yourusername/restaurant-sentiment-analysis.git
+cd restaurant-sentiment-analysis
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-## 📂 Project Structure
+### Running the Application
+
+```bash
+# Train all models and evaluate performance
+python main.py
+
+# Launch interactive demo (requires Streamlit)
+streamlit run app.py
+
+# View models performance and confusion matrix (requires Tensorboard)
+tensorboard --logdir logs
+```
+## 🏗️ Project Structure
 
 ```
-restaurant-review-ensemble/
+restaurant-sentiment-analysis/
 │
-├── data/                     # Downloaded datasets
-├── models/                   # Saved model checkpoints (optional)
-├── notebooks/                # Jupyter notebooks (if applicable)
-├── restaurant_sentiment.py   # Main model pipeline (class-based)
-├── README.md                 # Project overview
-└── requirements.txt          # Required packages
+├── logs/                    # Tensorboard logs for accuracy, loss and confusion matrix
+├── models/                  # Model implementations code
+├── save/                    # Models pickle files
+├── app.py                   # Streamlit web application
+├── main.py                  # Training models
+├── testm.py                 # Model testing
+├── tb_utils.py              # Tensorbaord wrapper file
+├── requirements.txt         # Dependencies
+├── config.yaml              # Online learned models path
+└── README.md                # This file
 ```
 
----
+## 📚 Dataset
 
-## 📊 Dataset
+The dataset contains 1000 restaurant reviews with binary sentiment labels:
 
-* Source: [Restaurant\_Reviews.tsv (Dropbox)](https://www.dropbox.com/scl/fi/6mvhmvbuyijpt5rwzk12o/Restaurant_Reviews.tsv?rlkey=31dhfnze1subkcsdoa50irtvc&st=77nhe6hr&dl=1)
-* Format: TSV file with two columns:
+| Column   | Description                          |
+|----------|--------------------------------------|
+| Review   | Text of customer review              |
+| Liked    | Sentiment label (1=Positive, 0=Negative) |
 
-  * `Review`: Text of the review
-  * `Liked`: Binary label (1 = Positive, 0 = Negative)
+**Download:** [Restaurant_Reviews.tsv](https://www.dropbox.com/scl/fi/6mvhmvbuyijpt5rwzk12o/Restaurant_Reviews.tsv?rlkey=31dhfnze1subkcsdoa50irtvc&st=77nhe6hr&dl=1)
 
----
+## 🧠 Model Architecture
 
-## 🏗️ How It Works
+### 1. Traditional Machine Learning
+```mermaid
+graph TD
+    A[Raw Text] --> B[Preprocessing]
+    B --> C[TF-IDF Vectorization]
+    C --> D[Logistic Regression]
+    D --> E[Prediction]
+```
 
-1. **Preprocessing**:
+### 2. Keras CNN
+```mermaid
+graph TD
+    A[Raw Text] --> B[Tokenization]
+    B --> C[Embedding Layer]
+    C --> D[Conv1D + MaxPooling]
+    D --> E[Flatten]
+    E --> F[Dense Layer]
+    F --> G[Prediction]
+```
 
-   * Traditional models: Lowercase, remove punctuation, tokenize, remove stopwords, lemmatize.
-   * Deep learning models: Tokenize and pad sequences.
+### 3. PyTorch CNN
+```mermaid
+graph TD
+    A[Input Text] --> B[Tokenization]
+    B --> C[Embedding Layer]
+    C --> D[Conv1D Layer<br>Filters: 100, Kernel: 3]
+    D --> E[ReLU Activation]
+    E --> F[AdaptiveMaxPool1D]
+    F --> G[Dropout Layer<br>p=0.5]
+    G --> H[Fully Connected Layer]
+    H --> I[Output Prediction]
+```
+### 4. Custom BERT Architecture
+```mermaid
+graph TD
+    A[Input Text] --> B[DistilBERT Tokenizer]
+    B --> C[Input IDs]
+    B --> D[Attention Mask]
+    C --> E[DistilBERT Layer]
+    D --> E
+    E --> F[Reshape Layer]
+    F --> G[Conv1D<br>Filters:64, Kernel:2]
+    G --> H[ReLU + Dropout]
+    H --> I[Conv1D<br>Filters:128, Kernel:2]
+    I --> J[ReLU + Dropout]
+    J --> K[GlobalMaxPooling1D]
+    K --> L[Dense Layer<br>Units:64]
+    L --> M[Sigmoid Output]
+```
 
-2. **Model Training**:
+### 5. Ensemble Voting
+```mermaid
+graph TD
+    A[Input Review] --> B[Model 1]
+    A --> C[Model 2]
+    A --> D[Model 3]
+    B --> E[Voting System]
+    C --> E
+    D --> E
+    E --> F[Final Prediction]
+```
 
-   * **Traditional**: TF-IDF + Logistic Regression (or LinearSVC).
-   * **Keras CNN**: Embedding + Conv1D + MaxPooling + Dense.
-   * **PyTorch CNN**: Custom CNN with embedding, conv layers, and dropout.
+## 📊 Results Visualization
+![image](https://github.com/user-attachments/assets/463fe142-90c4-4242-9125-c835485c1818)
+![image](https://github.com/user-attachments/assets/293a8eaf-48a9-462e-aa22-4198cf329522)
 
-3. **Ensemble Prediction**:
+## 🛠️ Customization
 
-   * **Soft Voting**: Average predicted probabilities.
-   * **Hard Voting**: Majority vote from binary predictions.
+### Training Configuration
+Edit `.env` to modify:
+- Model training local path
+- CSV Path
+- Training epochs
+Edit `config.yaml` to modify:
+- Model online URL
 
----
-
-## 🧪 Evaluation Metrics
-
-* Accuracy
-* F1 Score
-* Confusion Matrix
-* Class-wise performance comparison
-
----
-
-## 🛠️ Setup Instructions
-
-1. **Clone the Repository**
-
-   ```bash
-   git clone https://github.com/yourusername/restaurant-review-ensemble.git
-   cd restaurant-review-ensemble
-   ```
-
-2. **Create a Virtual Environment & Install Dependencies**
-
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # on Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-
-3. **Run the Project**
-   You can use the `RestaurantSentimentAnalyzer` class in your Python script or notebook:
-
+### Adding New Models
+1. Create new model file in `models/` directory
+2. Implement required interface:
    ```python
-   from restaurant_sentiment import RestaurantSentimentAnalyzer
-
-   analyzer = RestaurantSentimentAnalyzer()
-   df = analyzer.load_data()
+   def train(X_train, y_train)
+   def predict(X_test)
    ```
-
----
-
-## 📈 Sample Output
-
-```
-Best Traditional Model: LogisticRegression with n-gram=2, F1=0.847
-Keras CNN training completed
-PyTorch CNN training completed
-
-Ensemble Accuracy (Soft Voting): 89.4%
-```
-
----
-
-## 🧠 Future Enhancements
-
-* Incorporate LSTM and BERT-based models
-* Include explainability tools (e.g., SHAP)
-* Web app deployment using Streamlit or Flask
-* Hyperparameter tuning using Optuna or Ray Tune
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to fork this repo and submit a pull request.
-
----
+3. Register model in `main.py` and config.yaml
 
 ## 📜 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
+## ✉️ Contact
+
+For questions or suggestions, please contact:
+- [Sultan](mailto:sultanmr@hotmail.com)
+- [Project Website](https://www.sultanmahmood.com)
 
 ---
 
-## 🙌 Acknowledgements
+<div align="center">
+  Made with ❤️ using Python, TensorFlow, and PyTorch
+</div>
+```
 
-* [NLTK](https://www.nltk.org/)
-* [TensorFlow](https://www.tensorflow.org/)
-* [PyTorch](https://pytorch.org/)
-* [Scikit-learn](https://scikit-learn.org/)
-* Inspired by ensemble learning and real-world NLP challenges.
+Key improvements:
+1. Add voice to text features for testing purposes
+2. Add multilingual options
+3. Added performance comparison table
+4. Included customization instructions
+
