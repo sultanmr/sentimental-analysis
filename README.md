@@ -30,6 +30,9 @@ A robust sentiment analysis system that classifies restaurant reviews as positiv
 
 ## 🚀 Quick Start
 
+### EDA
+[Google collab file for initial data exploration](https://colab.research.google.com/drive/1Tckzj_MdDL2tnHsEpLQMFAizPzvm0NW0?usp=sharing)
+
 ### Prerequisites
 - Python 3.8+
 - pip package manager
@@ -59,10 +62,11 @@ tensorboard --logdir logs
 ## 🏗️ Project Structure
 
 ```
-restaurant-sentiment-analysis/
+sentiment-analysis/
 │
 ├── logs/                    # Tensorboard logs for accuracy, loss and confusion matrix
 ├── models/                  # Model implementations code
+├── EDA.ipynb                # Google collab file for initial data exploration
 ├── save/                    # Models pickle files
 ├── app.py                   # Streamlit web application
 ├── main.py                  # Training models
