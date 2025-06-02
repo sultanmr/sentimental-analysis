@@ -138,9 +138,15 @@ def make_prediction(text, model_name):
         pred, prob = model.predict_n_proba([text])
         pred = int(pred)
         prob = float(prob)
-        if pred==1:
-            probabilities = np.array([1-prob, prob])
-        else:
+        #print ("=*100")
+        #print (pred, prob)
+        #print ("="*100)
+        
+        probabilities = np.array([1-prob, prob])
+        if model_name=="Keras_CNN" or model_name=="Customize_BERT":
+            return pred, probabilities   
+
+        if  pred<1:
             probabilities = np.array([prob, 1-prob])
         return pred, probabilities
     except Exception as e:
