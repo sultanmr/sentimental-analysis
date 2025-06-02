@@ -11,10 +11,10 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import GridSearchCV
 from scikeras.wrappers import KerasClassifier
 from tensorflow.keras.optimizers import Adam
+import os
 
-from models.base_model import BaseModel
 
-class KerasCNN(BaseModel):
+class KerasCNN:
     def __init__(self, max_words=5000, max_len=200):
         self.tokenizer = Tokenizer(num_words=max_words)
         self.max_words = max_words
@@ -42,7 +42,7 @@ class KerasCNN(BaseModel):
         sequences = self.tokenizer.texts_to_sequences(X_train)
         padded = pad_sequences(sequences, maxlen=self.max_len)
         y_train_enc = self.label_encoder.fit_transform(y_train)
-        
+        epochs = int(os.getenv("EPOCHS", epochs))
         # Preprocess validation data if provided
         validation_data = None
         if X_val is not None:
@@ -140,3 +140,14 @@ class KerasCNN(BaseModel):
         padded = pad_sequences(sequences, maxlen=self.max_len)
         preds = self.model.predict(padded)
         return (preds > 0.5).astype(int).flatten()
+
+
+    def predict_n_proba(self, X_test):
+        X_test = self.preprocess_text(X_test)
+        sequences = self.tokenizer.texts_to_sequences(X_test)
+        padded = pad_sequences(sequences, maxlen=self.max_len)
+        
+        probs = self.model.predict(padded)  # shape: (n_samples, 1)
+        preds = (probs > 0.5).astype(int).flatten()
+        
+        return preds[0], float(probs[0])  # return first prediction and its confidence

@@ -1,3 +1,4 @@
+import os
 import re
 import string
 import numpy as np
@@ -6,7 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
-from models.base_model import BaseModel
+import numpy as np
 
 # Text Preprocessing Transformer
 class TextPreprocessor(BaseEstimator, TransformerMixin):
@@ -27,7 +28,7 @@ class TextPreprocessor(BaseEstimator, TransformerMixin):
         return [self.clean_text(text) for text in X]
 
 
-class TraditionalModel(BaseModel):
+class TraditionalModel:
     def __init__(self):
         # Define the pipeline
         self.pipeline = Pipeline([
@@ -100,3 +101,10 @@ class TraditionalModel(BaseModel):
 
     def predict_proba(self, X_test):
         return self.grid.predict_proba(X_test)
+
+
+    def predict_n_proba(self, X_test):
+        probs = self.grid.predict_proba(X_test)[0]
+        pred = np.argmax(probs)
+        pred_prob = max(probs)
+        return pred, pred_prob

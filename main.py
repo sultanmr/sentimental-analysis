@@ -30,7 +30,7 @@ from models.pytorch_cnn import PyTorchCNN
 from models.transformers_model import HFTransformer
 from models.traditional import TraditionalModel
 from models.bert_model import CustomBERTModel
-from models.base_model import BaseModel
+
 from utils import *
 from tb_utils import *
 
@@ -45,10 +45,10 @@ X_train, X_test, y_train, y_test = train_test_split(df['Review'], df['Liked'], t
 
 models_dict = {
     "Logistic_Regression": TraditionalModel(),
-    #"Keras_CNN": KerasCNN(),
-    #"Pytorch_CNN": PyTorchCNN(),
-   # "Customize_BERT": CustomBERTModel(),
-   # "Huggingface_Transformer": HFTransformer(),
+    "Keras_CNN": KerasCNN(),
+    "Pytorch_CNN": PyTorchCNN(),
+    "Customize_BERT": CustomBERTModel(),
+    "Huggingface_Transformer": HFTransformer(),
 }
 
 accuracy_results = {}
@@ -84,3 +84,10 @@ print("="*100)
 for model_name, accuracy in accuracy_results.items():
     print(f"{model_name}: {accuracy*100:.2f}%")
 
+text = "The product worked great and I'm very satisfied!"
+for model_name, model in models_dict.items():
+    try:
+        res = model.predict_n_proba(text)
+        print(f"{model_name}: {res}")
+    except:
+        pass

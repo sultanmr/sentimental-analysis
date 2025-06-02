@@ -1,3 +1,4 @@
+import os
 import re
 import string
 import torch
@@ -9,8 +10,8 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.callbacks import EarlyStopping
-from models.base_model import BaseModel
-
+import torch.nn.functional as F
+import numpy as np
 
 
 class CNNClassifier(nn.Module):
@@ -29,13 +30,13 @@ class CNNClassifier(nn.Module):
         x = self.dropout(x)
         return self.fc(x)
 
-class PyTorchCNN(BaseModel):
+class PyTorchCNN:
     def __init__(self, max_words=5000, max_len=200, embed_dim=128, batch_size=32, epochs=50):
         self.max_words = max_words
         self.max_len = max_len
         self.embed_dim = embed_dim
         self.batch_size = batch_size
-        self.epochs = epochs
+        self.epochs = int(os.getenv("EPOCHS", epochs))
         self.tokenizer = Tokenizer(num_words=max_words)
         self.label_encoder = LabelEncoder()
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -172,3 +173,20 @@ class PyTorchCNN(BaseModel):
             outputs = self.model(X_tensor)
             preds = torch.argmax(outputs, dim=1).cpu().numpy()
         return preds
+
+
+
+    def predict_n_proba(self, X_test):
+        self.model.eval()
+        X_test = self.preprocess_text(X_test)
+        sequences = self.tokenizer.texts_to_sequences(X_test)
+        padded = pad_sequences(sequences, maxlen=self.max_len)
+        X_tensor = torch.tensor(padded, dtype=torch.long).to(self.device)
+
+        with torch.no_grad():
+            outputs = self.model(X_tensor)  # logits
+            probs = F.softmax(outputs, dim=1).cpu().numpy()  # convert logits to probabilities
+            preds = np.argmax(probs, axis=1)
+            max_probs = np.max(probs, axis=1)
+
+        return preds[0], max_probs[0]  # Return first prediction and its confidence

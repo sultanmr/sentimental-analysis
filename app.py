@@ -1,5 +1,5 @@
 import streamlit as st
-
+import time
 import numpy as np
 import requests
 import pickle
@@ -8,6 +8,13 @@ from pathlib import Path
 import pandas as pd
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 import yaml
+from models.bert_model import CustomBERTModel
+
+
+# Initialize session state for model caching
+if 'loaded_models' not in st.session_state:
+    st.session_state.loaded_models = {}
+
 
 models = {}
 
@@ -20,13 +27,80 @@ st.set_page_config(page_title="Model Testing UI", layout="wide")
 st.title("🛠️ Model Testing Dashboard")
 
 
-# Download model from Dropbox
-@st.cache_resource(show_spinner=False)
-def load_model_from_dropbox(url):
-    try:
+
+def load_model_from_dropbox_old(model_name, url):
+    try:        
         response = requests.get(url)
         response.raise_for_status()
-        return pickle.load(io.BytesIO(response.content))
+        loaded_model = pickle.load(io.BytesIO(response.content))
+        return loaded_model
+
+    except Exception as e:
+        st.error(f"Failed to load model: {str(e)}")
+        return None
+
+def get_from_cache(model_name):
+    """Check if model exists in session state cache"""
+    return st.session_state.loaded_models.get(model_name)
+    
+
+# Download model from Dropbox
+@st.cache_resource(show_spinner=False)
+def load_model_from_dropbox(model_name, url):
+    
+    try:
+        if 'loaded_models' not in st.session_state:
+            st.session_state.loaded_models = {}
+        loaded_models = st.session_state.loaded_models
+
+        if model_name in loaded_models:
+            return loaded_models[model_name]
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        
+        # Get the total file size
+        total_size = int(response.headers.get('content-length', 0))
+        bytes_read = 0
+        
+        # Create a progress bar
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        # Create a bytes buffer to store the downloaded data
+        data = io.BytesIO()
+        
+        for chunk in response.iter_content(chunk_size=8192):
+            data.write(chunk)
+            bytes_read += len(chunk)
+            
+            # Update progress bar
+            if total_size > 0:
+                progress_percent = (bytes_read / total_size)
+                progress_bar.progress(min(progress_percent, 1.0))
+                status_text.text(f"Downloading {model_name}: {bytes_read/1024/1024:.1f}MB / {total_size/1024/1024:.1f}MB ({progress_percent*100:.1f}%)")
+            else:
+                progress_bar.progress(0.5)
+                status_text.text(f"Downloading {model_name}: {bytes_read/1024/1024:.1f}MB")
+        
+        # Reset buffer position to the beginning
+        data.seek(0)
+        
+        # Show loading message
+        status_text.text(f"Loading {model_name} into memory...")
+        
+        # Load the model
+        loaded_model = pickle.load(data)
+        
+        # Complete the progress
+        progress_bar.progress(1.0)
+        status_text.text(f"{model_name} loaded successfully!")
+        #time.sleep(0.5)  # Let users see the completion
+        #status_text.empty()
+        loaded_models[model_name] = loaded_model
+        st.session_state.loaded_models = loaded_models
+
+        return loaded_model
+
     except Exception as e:
         st.error(f"Failed to load model: {str(e)}")
         return None
@@ -40,8 +114,11 @@ selected_model = st.sidebar.selectbox(
 
 # Load selected model
 model_url = models[selected_model]
-with st.spinner(f"Loading {selected_model}..."):
-    model = load_model_from_dropbox(model_url)
+model = get_from_cache(selected_model)
+
+if model is None:
+    with st.spinner(f"Loading {selected_model}..."):
+        model = load_model_from_dropbox(selected_model, model_url)
 
 if not model:
     st.error("Model failed to load. Please check the URL.")
@@ -58,40 +135,12 @@ user_input = st.text_area(
 # Prediction function (customize per model type)
 def make_prediction(text, model_name):
     try:
-        if hasattr(model, 'predict_proba'):
-            # Scikit-learn style models
-            proba = model.predict_proba([text])[0]
-            pred = model.predict([text])[0]
-            print ("predict_proba", pred, proba)
-            return pred, proba
-        if hasattr(model, 'predict'):            
-            if model_name == "Keras_CNN":
-                # Preprocess the text exactly like during training
-                text_clean = model.preprocess_text([text])
-                sequences = model.tokenizer.texts_to_sequences(text_clean)
-                padded = pad_sequences(sequences, maxlen=model.max_len)
-                return int(pred > 0.5), np.array([1-float(pred), float(pred)])
-        
-            pred = model.predict([text])[0]
-            return int(pred > 0.5), np.array([1-float(pred), float(pred)])
-            
-           
-        #    # Keras/TensorFlow models - needs proper preprocessing
-        #     if isinstance(model, KerasCNN):  # Special handling for your KerasCNN
-        #         # Preprocess the text exactly like during training
-        #         text_clean = model.preprocess_text([text])
-        #         sequences = model.tokenizer.texts_to_sequences(text_clean)
-        #         padded = pad_sequences(sequences, maxlen=model.max_len)
-                
-        #         # Get prediction
-        #         pred = model.model.predict(padded)[0][0]  # Get single probability
-        #         return int(pred > 0.5), float(pred)
-        #     else:
-        #         # For other Keras models
-        #         pred = model.predict([text])[0][0]
-        #         return int(pred > 0.5), float(pred)
-        else:
-            return None, None
+        pred, prob = model.predict_n_proba([text])
+        if (pred==1)
+            probabilities = np.array([1-float(prob), float(prob)])
+        else
+            probabilities = np.array([float(prob), 1-float(prob)])
+        return int(pred), probabilities
     except Exception as e:
         st.error(f"Prediction error: {str(e)}")
         return None, None

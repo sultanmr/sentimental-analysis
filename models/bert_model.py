@@ -1,3 +1,4 @@
+import os
 from transformers import TFDistilBertModel, AutoTokenizer
 from tensorflow.keras.layers import Input, Layer, Dense, Dropout, Conv1D, Flatten, Reshape
 from tensorflow.keras.models import Model
@@ -5,20 +6,33 @@ from scikeras.wrappers import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 import tensorflow as tf
 import numpy as np
-from models.base_model import BaseModel
 
+from tensorflow.keras.saving import register_keras_serializable
+
+@register_keras_serializable(package="CustomLayers")
 class DistilBERTLayer(Layer):
     def __init__(self, model_name='distilbert-base-uncased', **kwargs):
-        super(DistilBERTLayer, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.model_name = model_name
         self.bert = TFDistilBertModel.from_pretrained(model_name)
         self.trainable = True
 
     def call(self, inputs):
         input_ids, attention_mask = inputs
-        output = self.bert(input_ids=input_ids, attention_mask=attention_mask)
-        return output.last_hidden_state  # Return full sequence output for Conv1D
+        return self.bert(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
 
-class CustomBERTModel(BaseModel):
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            'model_name': self.model_name
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+class CustomBERTModel:
 
     def __init__(self, model_name="distilbert-base-uncased", max_len=128, 
                  dropout_rate1=0.3, dropout_rate2=0.2, dense_units=64, 
@@ -29,8 +43,8 @@ class CustomBERTModel(BaseModel):
         self.dropout_rate2 = dropout_rate2
         self.dense_units = dense_units
         self.learning_rate = learning_rate
-        self.batch_size = batch_size
-        self.epochs = epochs
+        self.batch_size = batch_size        
+        self.epochs = int(os.getenv("EPOCHS", epochs))
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = self.build_model()
 
@@ -66,8 +80,6 @@ class CustomBERTModel(BaseModel):
                               truncation=True, return_tensors='tf')
         return {'input_ids': encodings['input_ids'],
                 'attention_mask': encodings['attention_mask']}
-
-
 
     def fit(self, texts, labels, validation_texts=None, validation_labels=None, validation_split=0.2, **kwargs):
         # Preprocess training data
@@ -122,6 +134,16 @@ class CustomBERTModel(BaseModel):
         _, accuracy = self.model.evaluate(x, tf.convert_to_tensor(labels), verbose=0)
         return accuracy
 
+    def predict_n_proba(self, texts):
+        encodings = self.preprocess(texts)
+        x = {
+            'input_ids': encodings['input_ids'],
+            'attention_mask': encodings['attention_mask']
+        }
+        probs = self.model.predict(x)
+        preds = (probs > 0.5).astype(int).flatten()
+        return preds[0], float(probs[0])
+
 def perform_grid_search(X_train, y_train):
     # Create model instance with build_fn as a class
     keras_classifier = KerasClassifier(
@@ -163,3 +185,5 @@ def perform_grid_search(X_train, y_train):
         print(f"{mean} ({stdev}) with: {param}")
     
     return grid_result
+
+    
