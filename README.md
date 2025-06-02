@@ -4,6 +4,9 @@
 
 A robust sentiment analysis system that classifies restaurant reviews as positive or negative using an ensemble of machine learning and deep learning models.
 
+[Live Demo](https://sultanmr-sentimental-analysis-app-941vjx.streamlit.app/)
+![image](https://github.com/user-attachments/assets/528ff651-cdda-4619-a86c-3ce064661f61)
+
 ## 🌟 Key Features
 
 - **Multi-Model Ensemble** combining:
@@ -34,8 +37,8 @@ A robust sentiment analysis system that classifies restaurant reviews as positiv
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/restaurant-sentiment-analysis.git
-cd restaurant-sentiment-analysis
+git clone https://github.com/sultanmr/sentimental-analysis.git
+cdsentimental-analysis
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
