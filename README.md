@@ -149,6 +149,7 @@ graph TD
 ```
 
 ## 📊 Results Visualization
+
 ![image](https://github.com/user-attachments/assets/463fe142-90c4-4242-9125-c835485c1818)
 ![image](https://github.com/user-attachments/assets/293a8eaf-48a9-462e-aa22-4198cf329522)
 
@@ -184,10 +185,6 @@ For questions or suggestions, please contact:
 
 ---
 
-<div align="center">
-  Made with ❤️ using Python, TensorFlow, and PyTorch
-</div>
-```
 
 Key improvements:
 1. Add voice to text features for testing purposes
