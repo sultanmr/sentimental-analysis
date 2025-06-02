@@ -136,11 +136,13 @@ user_input = st.text_area(
 def make_prediction(text, model_name):
     try:
         pred, prob = model.predict_n_proba([text])
-        if (pred==1)
-            probabilities = np.array([1-float(prob), float(prob)])
+        pred = int(pred)
+        prob = float(prob)
+        if pred==1:
+            probabilities = np.array([1-prob, prob])
         else
-            probabilities = np.array([float(prob), 1-float(prob)])
-        return int(pred), probabilities
+            probabilities = np.array([prob, 1-prob])
+        return pred, probabilities
     except Exception as e:
         st.error(f"Prediction error: {str(e)}")
         return None, None
