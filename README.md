@@ -178,11 +178,6 @@ Edit `config.yaml` to modify:
    ```
 3. Register model in `main.py` and config.yaml
 
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-
 ## ✉️ Contact
 
 For questions or suggestions, please contact:
