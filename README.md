@@ -41,7 +41,7 @@ A robust sentiment analysis system that classifies restaurant reviews as positiv
 
 ```bash
 git clone https://github.com/sultanmr/sentimental-analysis.git
-cdsentimental-analysis
+cd sentimental-analysis
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
@@ -155,7 +155,8 @@ graph TD
 ## 📊 Results Visualization
 
 ![image](https://github.com/user-attachments/assets/463fe142-90c4-4242-9125-c835485c1818)
-![image](https://github.com/user-attachments/assets/293a8eaf-48a9-462e-aa22-4198cf329522)
+![image](https://github.com/user-attachments/assets/bb2abc85-2c30-48ae-9a01-eafc0f3cb3c5)
+
 
 ## 🛠️ Customization
 
