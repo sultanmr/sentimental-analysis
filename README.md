@@ -154,8 +154,7 @@ graph TD
 
 ## 📊 Results Visualization
 
-![image](https://github.com/user-attachments/assets/fe79723c-7dda-4341-be34-a63916c112a5)
-![image](https://github.com/user-attachments/assets/7d6c9e63-abfc-4a0d-90eb-59e71229d18b)
+![image](https://github.com/user-attachments/assets/6c46629f-5987-4df3-8b26-97e507adc904)
 ![image](https://github.com/user-attachments/assets/bb2abc85-2c30-48ae-9a01-eafc0f3cb3c5)
 
 
