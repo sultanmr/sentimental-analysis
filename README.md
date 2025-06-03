@@ -165,6 +165,7 @@ Edit `.env` to modify:
 - Model training local path
 - CSV Path
 - Training epochs
+  
 Edit `config.yaml` to modify:
 - Model online URL
 
